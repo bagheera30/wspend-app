@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LaporanPage extends StatefulWidget {
-  const LaporanPage({Key? key}) : super(key: key);
+  const LaporanPage({super.key});
 
   @override
   State<LaporanPage> createState() => _LaporanPageState();
@@ -25,7 +25,7 @@ class _LaporanPageState extends State<LaporanPage> {
         leading: Container(),
         title: Text('Laporan',
             style: GoogleFonts.roboto(
-              textStyle: TextStyle(
+              textStyle: const TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
@@ -39,7 +39,7 @@ class _LaporanPageState extends State<LaporanPage> {
           children: [
             Text('Pilih bulan dan tahun untuk melihat laporan',
                 style: GoogleFonts.roboto(
-                  textStyle: TextStyle(
+                  textStyle: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -51,7 +51,7 @@ class _LaporanPageState extends State<LaporanPage> {
                 Expanded(
                   child: DropdownButtonFormField<String>(
                     value: selectedBulan,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Bulan',
                       labelStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(),
@@ -67,7 +67,7 @@ class _LaporanPageState extends State<LaporanPage> {
                           child: Text(
                             bulan,
                             style: GoogleFonts.roboto(
-                              textStyle: TextStyle(color: Colors.black),
+                              textStyle: const TextStyle(color: Colors.black),
                             ),
                           ));
                     }).toList(),
@@ -77,7 +77,7 @@ class _LaporanPageState extends State<LaporanPage> {
                 Expanded(
                   child: DropdownButtonFormField<String>(
                     value: selectedTahun,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Tahun',
                       labelStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(),
@@ -93,7 +93,7 @@ class _LaporanPageState extends State<LaporanPage> {
                           child: Text(
                             tahun,
                             style: GoogleFonts.roboto(
-                              textStyle: TextStyle(color: Colors.black),
+                              textStyle: const TextStyle(color: Colors.black),
                             ),
                           ));
                     }).toList(),

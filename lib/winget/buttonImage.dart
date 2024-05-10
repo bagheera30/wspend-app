@@ -17,7 +17,7 @@ class ButtonImage extends StatelessWidget {
       onPressed: onPress,
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.black,
-        backgroundColor: Color.fromARGB(255, 173, 165, 2),
+        backgroundColor: const Color.fromARGB(255, 173, 165, 2),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30), // Sudut melengkung
         ),
@@ -30,10 +30,10 @@ class ButtonImage extends StatelessWidget {
             height: 30,
             width: 30,
           ),
-          SizedBox(width: 30), // Add spacing between image and text
+          const SizedBox(width: 30), // Add spacing between image and text
           Text(
             teks,
-            style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 20)),
+            style: GoogleFonts.roboto(textStyle: const TextStyle(fontSize: 20)),
           ),
         ],
       ),

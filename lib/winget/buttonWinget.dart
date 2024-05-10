@@ -33,7 +33,7 @@ class Buttonwinget extends StatelessWidget {
             Text(
               text,
               style: GoogleFonts.roboto(
-                textStyle: TextStyle(fontSize: 20),
+                textStyle: const TextStyle(fontSize: 20),
               ),
             ),
           ],

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tubes_ppb_wespend/auth/regis.dart';
+import 'package:tubes_ppb_wespend/home.dart';
 import 'package:tubes_ppb_wespend/provider/authProvider.dart';
 import 'package:tubes_ppb_wespend/winget/buttonImage.dart';
 import 'package:tubes_ppb_wespend/winget/buttonWinget.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+  const Login({super.key});
 
   @override
   State<Login> createState() => _LoginState();
@@ -52,7 +53,7 @@ class _LoginState extends State<Login> {
 
     if (password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill in all fields correctly')),
+        const SnackBar(content: Text('Please fill in all fields correctly')),
       );
       return;
     }
@@ -61,6 +62,12 @@ class _LoginState extends State<Login> {
       // Menampilkan CircularProgressIndicator() sebelum await _authProvider.signIn()
 
       await _authProvider.signIn(email, password);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const Home(), // Navigasi ke halaman Regis
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
@@ -96,7 +103,7 @@ class _LoginState extends State<Login> {
                         Text(
                           "Ayo mulai bijak dengan keuanganmu di aplikasi WSpend!",
                           style: GoogleFonts.roboto(
-                            textStyle: TextStyle(fontSize: 20),
+                            textStyle: const TextStyle(fontSize: 20),
                           ),
                         ),
                       ],
@@ -117,8 +124,8 @@ class _LoginState extends State<Login> {
                           TextFormField(
                             controller: emailController,
                             keyboardType: TextInputType.emailAddress,
-                            decoration:
-                                InputDecoration(labelText: 'Email Address'),
+                            decoration: const InputDecoration(
+                                labelText: 'Email Address'),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter an email address';
@@ -172,7 +179,7 @@ class _LoginState extends State<Login> {
                   "----------- Atau -----------",
                   style: GoogleFonts.roboto(fontSize: 22),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 ButtonImage(
@@ -180,7 +187,7 @@ class _LoginState extends State<Login> {
                   onPress: KlikGoogle,
                   teks: 'GOOGLE',
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
@@ -189,15 +196,15 @@ class _LoginState extends State<Login> {
                     Text(
                       'belum punya akun',
                       style: GoogleFonts.roboto(
-                          textStyle: TextStyle(fontSize: 18)),
+                          textStyle: const TextStyle(fontSize: 18)),
                     ),
-                    SizedBox(width: 0), // Menambahkan space horizontal
+                    const SizedBox(width: 0), // Menambahkan space horizontal
                     TextButton(
                       onPressed: goToRegisterPage,
                       child: Text(
                         'register',
                         style: GoogleFonts.roboto(
-                            textStyle: TextStyle(fontSize: 17)),
+                            textStyle: const TextStyle(fontSize: 17)),
                       ),
                     )
                   ],

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LimitPage extends StatefulWidget {
-  const LimitPage({Key? key});
+  const LimitPage({super.key});
 
   @override
   State<LimitPage> createState() => _LimitPageState();
@@ -19,7 +19,7 @@ class _LimitPageState extends State<LimitPage> {
         leading: Container(), // Menghilangkan tombol kembali
         title: Text('Limit pengeluaran',
             style: GoogleFonts.roboto(
-              textStyle: TextStyle(
+              textStyle: const TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
@@ -33,7 +33,7 @@ class _LimitPageState extends State<LimitPage> {
           children: [
             Text('Silakan masukkan limit yang Anda inginkan:',
                 style: GoogleFonts.roboto(
-                  textStyle: TextStyle(
+                  textStyle: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),

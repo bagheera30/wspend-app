@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tubes_ppb_wespend/auth/login.dart';
 import 'package:tubes_ppb_wespend/provider/authProvider.dart';
+import 'package:tubes_ppb_wespend/winget/buttonWinget.dart';
 
 class Regis extends StatefulWidget {
-  const Regis({Key? key}) : super(key: key);
+  const Regis({super.key});
 
   @override
   State<Regis> createState() => _RegisState();
@@ -50,6 +51,15 @@ class _RegisState extends State<Regis> {
     });
   }
 
+  void gotologin() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const Login(), // Navigasi ke halaman Regis
+      ),
+    );
+  }
+
   Future<void> submitForm() async {
     final name = nameController.text.trim();
     final phone = phoneController.text.trim();
@@ -58,7 +68,7 @@ class _RegisState extends State<Regis> {
 
     if (email.isEmpty || pass.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill in all fields correctly')),
+        const SnackBar(content: Text('Please fill in all fields correctly')),
       );
       return;
     }
@@ -96,7 +106,7 @@ class _RegisState extends State<Regis> {
                 Text(
                   "WSpend",
                   style: GoogleFonts.vampiroOne(
-                    textStyle: TextStyle(
+                    textStyle: const TextStyle(
                       fontSize: 30,
                       color: Colors.black87,
                     ),
@@ -106,15 +116,15 @@ class _RegisState extends State<Regis> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
-                    padding: EdgeInsets.only(left: 20),
+                    padding: const EdgeInsets.only(left: 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "Ayo mulai bijak dengan keuanganmu di aplikasi WSpend!",
                           style: GoogleFonts.roboto(
-                            textStyle:
-                                TextStyle(fontSize: 20, fontFamily: "Roboto"),
+                            textStyle: const TextStyle(
+                                fontSize: 20, fontFamily: "Roboto"),
                           ),
                         )
                       ],
@@ -127,7 +137,7 @@ class _RegisState extends State<Regis> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(left: 12),
+                      padding: const EdgeInsets.only(left: 12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -141,9 +151,9 @@ class _RegisState extends State<Regis> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Padding(
-                      padding: EdgeInsets.only(left: 12),
+                      padding: const EdgeInsets.only(left: 12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -158,9 +168,9 @@ class _RegisState extends State<Regis> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Padding(
-                      padding: EdgeInsets.only(left: 12),
+                      padding: const EdgeInsets.only(left: 12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -174,9 +184,9 @@ class _RegisState extends State<Regis> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Padding(
-                      padding: EdgeInsets.only(left: 12),
+                      padding: const EdgeInsets.only(left: 12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -199,9 +209,9 @@ class _RegisState extends State<Regis> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Padding(
-                      padding: EdgeInsets.only(left: 12),
+                      padding: const EdgeInsets.only(left: 12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -238,27 +248,32 @@ class _RegisState extends State<Regis> {
                     ),
                   ],
                 ),
-                SizedBox(height: 50),
-                ElevatedButton(
-                  onPressed: submitForm,
-                  child: Text(
-                    "Buat Akun",
-                    style: GoogleFonts.roboto(
-                      textStyle: TextStyle(fontSize: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'sudah punya akun?',
+                      style: GoogleFonts.roboto(
+                          textStyle: const TextStyle(fontSize: 17)),
                     ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.white, // Warna teks
-                    minimumSize:
-                        const Size(double.infinity, 50), // Tombol selebar layar
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(30), // Sudut melengkung
-                    ),
-                  ),
+                    TextButton(
+                      onPressed: gotologin,
+                      child: Text(
+                        'Login',
+                        style: GoogleFonts.roboto(
+                            textStyle: const TextStyle(fontSize: 17)),
+                      ),
+                    )
+                  ],
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 10),
+                Buttonwinget(
+                  onPress: submitForm,
+                  text: 'Buat akun',
+                  minimumsize1: double.infinity,
+                  minimumsize2: 55,
+                ),
+                const SizedBox(height: 10),
               ],
             ),
           ),

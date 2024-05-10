@@ -8,7 +8,7 @@ import 'package:tubes_ppb_wespend/navbar/limitPage.dart';
 import 'package:tubes_ppb_wespend/navbar/profilePage.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -38,14 +38,14 @@ class _HomeState extends State<Home> {
   void _goToAddIncomePage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AddIncomePage()),
+      MaterialPageRoute(builder: (context) => const AddIncomePage()),
     );
   }
 
   void _goToExpandedPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AddExpendesPage()),
+      MaterialPageRoute(builder: (context) => const AddExpendesPage()),
     );
   }
 
@@ -54,7 +54,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          color: Colors.yellow[600],
+          color: Colors.transparent,
           child: PageView(
             controller: _pgc,
             onPageChanged: (i) {
@@ -87,6 +87,7 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+            backgroundColor: Color.fromARGB(255, 253, 216, 52),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.attach_money),
@@ -95,14 +96,17 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
             icon: Icon(Icons.add_circle_outline_outlined),
             label: 'add',
+            backgroundColor: Color.fromARGB(255, 253, 216, 52),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.report),
             label: 'laporan',
+            backgroundColor: Color.fromARGB(255, 253, 216, 52),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
             label: 'Profile',
+            backgroundColor: Color.fromARGB(255, 253, 216, 52),
           ),
         ],
       ),
@@ -111,19 +115,19 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 FloatingActionButton(
-                  backgroundColor: Color.fromARGB(255, 170, 148, 43),
+                  backgroundColor: const Color.fromARGB(255, 170, 148, 43),
                   onPressed: () {
                     _goToAddIncomePage();
                   },
                   heroTag: null,
-                  child: Icon(Icons.add, color: Colors.white),
+                  child: const Icon(Icons.add, color: Colors.white),
                 ),
                 const SizedBox(height: 16),
                 FloatingActionButton(
-                  backgroundColor: Color.fromARGB(255, 170, 148, 43),
+                  backgroundColor: const Color.fromARGB(255, 170, 148, 43),
                   onPressed: _goToExpandedPage,
                   heroTag: null,
-                  child: Icon(Icons.expand, color: Colors.white),
+                  child: const Icon(Icons.expand, color: Colors.white),
                 ),
               ],
             )
