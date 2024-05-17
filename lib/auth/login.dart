@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tubes_ppb_wespend/auth/regis.dart';
 import 'package:tubes_ppb_wespend/home.dart';
 import 'package:tubes_ppb_wespend/provider/authProvider.dart';
-import 'package:tubes_ppb_wespend/winget/buttonImage.dart';
+
 import 'package:tubes_ppb_wespend/winget/buttonWinget.dart';
 
 class Login extends StatefulWidget {
@@ -35,16 +35,6 @@ class _LoginState extends State<Login> {
         builder: (context) => const Regis(), // Navigasi ke halaman Regis
       ),
     );
-  }
-
-  Future<void> KlikGoogle() async {
-    try {
-      await _authProvider.signInWithGoogle();
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
-    }
   }
 
   Future<void> submitForm() async {
@@ -175,26 +165,14 @@ class _LoginState extends State<Login> {
                   minimumsize2: 50,
                 ),
                 const SizedBox(height: 18),
-                Text(
-                  "----------- Atau -----------",
-                  style: GoogleFonts.roboto(fontSize: 22),
-                ),
                 const SizedBox(
-                  height: 20,
-                ),
-                ButtonImage(
-                  image: "assets/images/google.png",
-                  onPress: KlikGoogle,
-                  teks: 'GOOGLE',
-                ),
-                const SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'belum punya akun',
+                      'belum punya akun ?',
                       style: GoogleFonts.roboto(
                           textStyle: const TextStyle(fontSize: 18)),
                     ),

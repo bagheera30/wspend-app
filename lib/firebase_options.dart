@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'wspend-509a7.appspot.com',
     iosBundleId: 'com.example.tubesPpbWespend',
   );
+
 }

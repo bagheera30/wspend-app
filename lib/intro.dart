@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tubes_ppb_wespend/auth/login.dart';
-
-import 'home.dart';
+import 'package:tubes_ppb_wespend/home.dart';
 
 class Intro extends StatefulWidget {
-  const Intro({Key? key}) : super(key: key);
+  const Intro({super.key});
 
   @override
   State<Intro> createState() => _IntroState();
@@ -36,7 +35,7 @@ class _IntroState extends State<Intro> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Container(
                 color: Colors.yellow[600],
-                child: Center(
+                child: const Center(
                   child: CircularProgressIndicator(),
                 ),
               );

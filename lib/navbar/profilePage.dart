@@ -22,6 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void presSignOut() async {
     await FirebaseAuth.instance.signOut();
+    Navigator();
   }
 
   void showEditProfileDialog() {
@@ -32,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
         String editedPassword = '';
 
         return AlertDialog(
-          title: Text('Edit Profile'),
+          title: const Text('Edit Profile'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -40,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 onChanged: (value) {
                   editedProfileName = value;
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Profile Name',
                 ),
               ),
@@ -48,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 onChanged: (value) {
                   editedPassword = value;
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Password',
                 ),
                 obscureText: true,
@@ -60,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
@@ -82,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 Navigator.pop(context);
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -170,7 +171,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           ),
                                           IconButton(
                                             onPressed: showEditProfileDialog,
-                                            icon: Icon(Icons.edit),
+                                            icon: const Icon(Icons.edit),
                                           )
                                         ],
                                       ),

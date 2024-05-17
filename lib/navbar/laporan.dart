@@ -12,7 +12,20 @@ class _LaporanPageState extends State<LaporanPage> {
   String? selectedBulan;
   String? selectedTahun;
 
-  List<String> bulanList = ['Januari', 'Februari', 'Maret', 'April', 'Mei'];
+  List<String> bulanList = [
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
   List<String> tahunList = ['2022', '2023', '2024', '2025', '2026'];
 
   @override
@@ -103,7 +116,7 @@ class _LaporanPageState extends State<LaporanPage> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 // Implement your logic to fetch or display data based on selected month and year
                 print('Bulan: $selectedBulan, Tahun: $selectedTahun');
               },

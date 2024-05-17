@@ -14,8 +14,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String bulan = DateFormat.MMMM().format(DateTime.now());
+
   // Include 0 in the list
-  int saldo = 0;
+  num saldo = 0;
+  num pengeluaran = 0;
+
+  void pengeluaranSaldo() {
+    setState(() async {
+      pengeluaran = await sumSaldoByMoth(bulan, 'expends');
+    });
+  }
 
   final formatCurrency = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp');
   List<int> angkaList = [];
@@ -35,6 +43,21 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void sumsaldo() async {
+    num income = await sumSaldo('income');
+    num expends = await sumSaldo('expends');
+    num p = await sumSaldoByMoth(bulan, 'expends');
+
+    num total = income - expends;
+
+    if (mounted) {
+      setState(() {
+        saldo = total;
+        pengeluaran = p;
+      });
+    }
+  }
+
   void loadMoreRiwayat() {
     setState(() {
       if (visibleRiwayatCount + 5 <= riwayatList.length) {
@@ -43,6 +66,12 @@ class _HomePageState extends State<HomePage> {
         visibleRiwayatCount = riwayatList.length;
       }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    sumsaldo();
   }
 
   @override
@@ -106,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                               child: Padding(
                                 padding:
                                     const EdgeInsets.only(left: 8, top: 12),
-                                child: Text(formatCurrency.format(saldo),
+                                child: Text(formatCurrency.format(pengeluaran),
                                     style: GoogleFonts.roboto(
                                       textStyle: const TextStyle(
                                         fontSize: 16,
@@ -197,7 +226,7 @@ class _HomePageState extends State<HomePage> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return Center(
+                                    return const Center(
                                       child: CircularProgressIndicator(),
                                     );
                                   } else if (snapshot.hasError) {
@@ -206,7 +235,7 @@ class _HomePageState extends State<HomePage> {
                                     );
                                   } else {
                                     return riwayatList.isEmpty
-                                        ? Center(
+                                        ? const Center(
                                             child: Text('No history available'),
                                           )
                                         : ListView.builder(

@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'MultiSellerSquare',
       home: Intro(),
       debugShowCheckedModeBanner: false,
