@@ -1,7 +1,7 @@
+import 'package:Wspend/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tubes_ppb_wespend/home.dart';
 
 class AddIncomePage extends StatefulWidget {
   const AddIncomePage({super.key});

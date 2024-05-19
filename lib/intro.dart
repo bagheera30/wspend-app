@@ -1,8 +1,8 @@
+import 'package:Wspend/auth/login.dart';
+import 'package:Wspend/home.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tubes_ppb_wespend/auth/login.dart';
-import 'package:tubes_ppb_wespend/home.dart';
 
 class Intro extends StatefulWidget {
   const Intro({super.key});

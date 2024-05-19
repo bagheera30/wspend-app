@@ -1,8 +1,8 @@
+import 'package:Wspend/auth/login.dart';
+import 'package:Wspend/provider/authProvider.dart';
+import 'package:Wspend/winget/buttonWinget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tubes_ppb_wespend/auth/login.dart';
-import 'package:tubes_ppb_wespend/provider/authProvider.dart';
-import 'package:tubes_ppb_wespend/winget/buttonWinget.dart';
 
 class Regis extends StatefulWidget {
   const Regis({super.key});

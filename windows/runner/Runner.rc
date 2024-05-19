@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "tubes_ppb_wespend" "\0"
+            VALUE "FileDescription", "Wspend" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "tubes_ppb_wespend" "\0"
+            VALUE "InternalName", "Wspend" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "tubes_ppb_wespend.exe" "\0"
-            VALUE "ProductName", "tubes_ppb_wespend" "\0"
+            VALUE "OriginalFilename", "Wspend.exe" "\0"
+            VALUE "ProductName", "Wspend" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -1,7 +1,8 @@
+import 'package:Wspend/getData/getDataRiwayat.dart';
+import 'package:Wspend/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tubes_ppb_wespend/home.dart';
 
 class AddExpendesPage extends StatefulWidget {
   const AddExpendesPage({super.key});
@@ -13,6 +14,57 @@ class AddExpendesPage extends StatefulWidget {
 class _AddExpendesPageState extends State<AddExpendesPage> {
   String _selectedCategory = '';
   TextEditingController amount = TextEditingController();
+
+  void validasi(String category) async {
+    num limit = await getLimit();
+
+    if (num.tryParse(amount.text) != null) {
+      num amountValue = num.parse(amount.text);
+
+      if (amountValue <= limit) {
+        simpan(category);
+        print('Data tersimpan');
+      } else {
+        // Tampilkan AlertDialog jika jumlah melebihi batas
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Peringatan'),
+              content: const Text('Jumlah melebihi batas limit.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } else {
+      // Tampilkan AlertDialog jika input tidak valid
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Peringatan'),
+            content: const Text('Jumlah tidak valid.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 
   void _showSavedData() {
     showDialog(
@@ -183,7 +235,7 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    simpan(_selectedCategory);
+                    validasi(_selectedCategory);
                     print(_selectedCategory);
                   },
                   child: const Text('Simpan'),

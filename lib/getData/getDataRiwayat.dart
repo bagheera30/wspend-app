@@ -45,10 +45,16 @@ Future<List<Map<String, dynamic>>> getData(String collect) async {
       Timestamp timestamp = document['timestamp'];
       String month = DateFormat('MMMM').format(timestamp.toDate());
       String tahun = DateFormat('yyyy').format(timestamp.toDate());
+      String tanggal = DateFormat('d').format(timestamp.toDate());
       int amount = document['amount'];
 
       // Tambahkan bulan dan amount ke dalam list result
-      result.add({'bulan': month, 'amount': amount, 'tahun': tahun});
+      result.add({
+        'bulan': month,
+        'amount': amount,
+        'tahun': tahun,
+        'tanggal': tanggal
+      });
     }
   } catch (e) {
     print('Terjadi kesalahan: $e');
@@ -57,29 +63,33 @@ Future<List<Map<String, dynamic>>> getData(String collect) async {
   return result;
 }
 
-Future<List<Map<String, dynamic>>> getDataByMonth(
-    String bulan, String collect) async {
+Future<List<Map<String, dynamic>>> getDataByMonthAndYears(
+    String bulan, String collect, String tahun) async {
   List<Map<String, dynamic>> result = [];
 
   try {
     List<Map<String, dynamic>> data = await getData(collect);
     for (var item in data) {
       String month = item['bulan'];
+      String years = item['tahun'];
+
 // Menambahkan print untuk menampilkan bulan
 
-      if (month == bulan) {
+      if (month == bulan && years == tahun) {
         // Filter data by the specified month
         // Add month and amount to the result list
         result.add({
           'bulan': month,
           'amount': item['amount'],
+          'tahun': years,
+          'tanggal': item['tanggal'],
         });
       }
     }
   } catch (e) {
     print('Terjadi kesalahan: $e');
   }
-
+  print(result);
   return result;
 }
 
@@ -94,8 +104,9 @@ Future<num> sumSaldo(String collect) async {
   return totalAmount;
 }
 
-Future<num> sumSaldoByMoth(String bulan, String collect) async {
-  List<Map<String, dynamic>> data = await getDataByMonth(bulan, collect);
+Future<num> sumSaldoByMoth(String bulan, String collect, String tahun) async {
+  List<Map<String, dynamic>> data =
+      await getDataByMonthAndYears(bulan, collect, tahun);
   num totalAmount = 0;
 
   for (var item in data) {
@@ -103,4 +114,27 @@ Future<num> sumSaldoByMoth(String bulan, String collect) async {
   }
 
   return totalAmount;
+}
+
+Future<num> getLimit() async {
+  final userC = FirebaseAuth.instance.currentUser!;
+  try {
+    final userDocument =
+        FirebaseFirestore.instance.collection('users').doc(userC.uid);
+
+    DocumentSnapshot documentSnapshot = await userDocument.get();
+    if (documentSnapshot.exists) {
+      final data = documentSnapshot.data()
+          as Map<String, dynamic>; // Lakukan casting ke Map<String, dynamic>
+      final limit = data['limit'] as num;
+      print('Limit: $limit');
+      return limit;
+    } else {
+      print('Document does not exist');
+      return 0; // Nilai default jika dokumen tidak ada
+    }
+  } catch (e) {
+    print('Failed to get limit: $e');
+    return 0; // Nilai default jika terjadi kesalahan
+  }
 }

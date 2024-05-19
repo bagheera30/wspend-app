@@ -1,10 +1,14 @@
+import 'dart:io';
+import 'package:Wspend/provider/cameraHelper.dart';
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -15,6 +19,8 @@ class _ProfilePageState extends State<ProfilePage> {
   String profileName = ''; // Nilai awal untuk nama profil
   String phoneNumber = ''; // No Handphone
   String email = ''; // Email
+  List<CameraDescription> cameras = [];
+  File? _image;
 
   final userDocument = FirebaseFirestore.instance
       .collection('users')
@@ -22,7 +28,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void presSignOut() async {
     await FirebaseAuth.instance.signOut();
-    Navigator();
   }
 
   void showEditProfileDialog() {
@@ -100,6 +105,67 @@ class _ProfilePageState extends State<ProfilePage> {
         phoneNumber = snapshot.data()?['phone'];
       });
     });
+    loadCameras();
+  }
+
+  Future<void> loadCameras() async {
+    try {
+      cameras = await CameraHelper.loadCameras();
+    } catch (e) {
+      print('Error loading cameras: $e');
+    }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedImage = await ImagePicker().pickImage(source: source);
+    if (pickedImage != null) {
+      setState(() {
+        _image = File(pickedImage.path);
+      });
+    }
+  }
+
+  Future<void> _takePicture() async {
+    final camera = cameras.first;
+    final pictureFile = await CameraHelper.takePicture(camera);
+
+    if (pictureFile != null) {
+      setState(() {
+        _image = pictureFile;
+      });
+    }
+  }
+
+  void _showImagePickerDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Pilih Sumber Gambar'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera),
+                title: Text('Kamera'),
+                onTap: () {
+                  _takePicture();
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Galeri'),
+                onTap: () {
+                  _pickImage(ImageSource.gallery);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -140,12 +206,26 @@ class _ProfilePageState extends State<ProfilePage> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Padding(
-                              padding: EdgeInsets.only(top: 8.0),
-                              child: Icon(
-                                Icons.account_circle,
-                                size: 40,
-                              ),
+                            Stack(
+                              children: [
+                                CircleAvatar(
+                                  radius: 40,
+                                  backgroundImage: _image != null
+                                      ? FileImage(_image!)
+                                      : null,
+                                  child: _image == null
+                                      ? Icon(Icons.account_circle, size: 40)
+                                      : null,
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  right: 0,
+                                  child: IconButton(
+                                    icon: Icon(Icons.camera_alt),
+                                    onPressed: _showImagePickerDialog,
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(width: 8),
                             Expanded(

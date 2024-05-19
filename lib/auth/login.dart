@@ -1,10 +1,9 @@
+import 'package:Wspend/auth/regis.dart';
+import 'package:Wspend/home.dart';
+import 'package:Wspend/provider/authProvider.dart';
+import 'package:Wspend/winget/buttonWinget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tubes_ppb_wespend/auth/regis.dart';
-import 'package:tubes_ppb_wespend/home.dart';
-import 'package:tubes_ppb_wespend/provider/authProvider.dart';
-
-import 'package:tubes_ppb_wespend/winget/buttonWinget.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});

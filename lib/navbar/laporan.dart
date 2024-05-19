@@ -1,5 +1,7 @@
+import 'package:Wspend/graphData.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class LaporanPage extends StatefulWidget {
   const LaporanPage({super.key});
@@ -12,21 +14,17 @@ class _LaporanPageState extends State<LaporanPage> {
   String? selectedBulan;
   String? selectedTahun;
 
-  List<String> bulanList = [
-    'Januari',
-    'Februari',
-    'Maret',
-    'April',
-    'Mei',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ];
-  List<String> tahunList = ['2022', '2023', '2024', '2025', '2026'];
+  List<String> bulanList = DateFormat('MMMM', 'en_US').dateSymbols.MONTHS;
+  List<String> tahunList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    int tahunSaatIni = DateTime.now().year;
+    for (int i = tahunSaatIni; i <= tahunSaatIni + 10; i++) {
+      tahunList.add(i.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +115,13 @@ class _LaporanPageState extends State<LaporanPage> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        Graphdata(bulan: selectedBulan!, tahun: selectedTahun!),
+                  ),
+                );
                 // Implement your logic to fetch or display data based on selected month and year
                 print('Bulan: $selectedBulan, Tahun: $selectedTahun');
               },

@@ -1,9 +1,9 @@
+import 'package:Wspend/getData/getDataRiwayat.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:tubes_ppb_wespend/getData/getDataRiwayat.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,16 +14,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String bulan = DateFormat.MMMM().format(DateTime.now());
+  String tahun = DateFormat.y().format(DateTime.now());
 
   // Include 0 in the list
   num saldo = 0;
   num pengeluaran = 0;
-
-  void pengeluaranSaldo() {
-    setState(() async {
-      pengeluaran = await sumSaldoByMoth(bulan, 'expends');
-    });
-  }
 
   final formatCurrency = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp');
   List<int> angkaList = [];
@@ -46,7 +41,7 @@ class _HomePageState extends State<HomePage> {
   void sumsaldo() async {
     num income = await sumSaldo('income');
     num expends = await sumSaldo('expends');
-    num p = await sumSaldoByMoth(bulan, 'expends');
+    num p = await sumSaldoByMoth(bulan, 'expends', tahun);
 
     num total = income - expends;
 
@@ -116,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Pengeluaran di bulan $bulan",
+                            Text("Pengeluaran di bulan $bulan, $tahun",
                                 style: GoogleFonts.roboto(
                                   textStyle: const TextStyle(
                                     fontSize: 16,
@@ -242,11 +237,10 @@ class _HomePageState extends State<HomePage> {
                                             itemCount: visibleRiwayatCount,
                                             itemBuilder: (context, index) {
                                               if (index < riwayatList.length) {
-                                                String pemasukanText = riwayatList[
-                                                            index] >
-                                                        0
-                                                    ? 'Pemasukan ${riwayatList[index]}'
-                                                    : 'Pengeluaran ${riwayatList[index].abs()}';
+                                                String pemasukanText =
+                                                    riwayatList[index] > 0
+                                                        ? 'Pemasukan '
+                                                        : 'Pengeluaran ';
 
                                                 return Row(
                                                   mainAxisAlignment:

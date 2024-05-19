@@ -63,6 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '347758885980',
     projectId: 'wspend-509a7',
     storageBucket: 'wspend-509a7.appspot.com',
+    iosClientId: '347758885980-o4bfhv60rknbr693eegifof5veal220f.apps.googleusercontent.com',
     iosBundleId: 'com.example.tubesPpbWespend',
   );
 

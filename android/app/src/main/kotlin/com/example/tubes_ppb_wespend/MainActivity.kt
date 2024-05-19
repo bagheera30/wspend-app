@@ -1,4 +1,4 @@
-package com.example.tubes_ppb_wespend
+package com.example.Wspend
 
 import io.flutter.embedding.android.FlutterActivity
 

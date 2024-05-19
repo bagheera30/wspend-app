@@ -1,11 +1,11 @@
+import 'package:Wspend/Add/addExpends.dart';
+import 'package:Wspend/Add/addIncome.dart';
+import 'package:Wspend/navbar/homePage.dart';
+import 'package:Wspend/navbar/laporan.dart';
+import 'package:Wspend/navbar/limitPage.dart';
+import 'package:Wspend/navbar/profilePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tubes_ppb_wespend/Add/addExpends.dart';
-import 'package:tubes_ppb_wespend/Add/addIncome.dart';
-import 'package:tubes_ppb_wespend/navbar/homePage.dart';
-import 'package:tubes_ppb_wespend/navbar/laporan.dart';
-import 'package:tubes_ppb_wespend/navbar/limitPage.dart';
-import 'package:tubes_ppb_wespend/navbar/profilePage.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
