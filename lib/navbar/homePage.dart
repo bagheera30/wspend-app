@@ -123,17 +123,13 @@ class _HomePageState extends State<HomePage> {
                             Container(
                               width: double.infinity,
                               height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.white, // Latar belakang putih
-                                borderRadius: BorderRadius.circular(5),
-                              ),
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.only(left: 8, top: 12),
+                                    const EdgeInsets.only(left: 8, top: 20),
                                 child: Text(formatCurrency.format(pengeluaran),
                                     style: GoogleFonts.roboto(
                                       textStyle: const TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 20,
                                         color: Colors.black87,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -173,16 +169,16 @@ class _HomePageState extends State<HomePage> {
                               width: double.infinity,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: Colors.white, // Latar belakang putih
+                                color:
+                                    Colors.transparent, // Latar belakang putih
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 8, top: 12),
+                                padding: const EdgeInsets.only(left: 8),
                                 child: Text(formatCurrency.format(saldo),
                                     style: GoogleFonts.roboto(
                                       textStyle: const TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 20,
                                         color: Colors.black87,
                                         fontWeight: FontWeight.bold,
                                       ),

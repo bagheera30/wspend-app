@@ -1,5 +1,6 @@
 import 'package:Wspend/getData/getDataRiwayat.dart';
 import 'package:Wspend/home.dart';
+import 'package:Wspend/provider/Notifikasi.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -64,6 +65,12 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
         },
       );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationHelper.initializeNotifications();
   }
 
   void _showSavedData() {
@@ -134,6 +141,8 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
       });
 
       _showSavedData();
+      double amount = double.parse(am);
+      NotificationHelper.showExpendsNotification(amount);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

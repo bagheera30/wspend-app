@@ -266,7 +266,7 @@ class _RegisState extends State<Regis> {
                     )
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 14),
                 Buttonwinget(
                   onPress: submitForm,
                   text: 'Buat akun',

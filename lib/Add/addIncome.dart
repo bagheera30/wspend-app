@@ -1,4 +1,5 @@
 import 'package:Wspend/home.dart';
+import 'package:Wspend/provider/Notifikasi.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -82,6 +83,8 @@ class _AddIncomePageState extends State<AddIncomePage> {
       });
 
       _showSavedData();
+      double amount = double.parse(am);
+      NotificationHelper.showIncomeNotification(amount);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -90,6 +93,12 @@ class _AddIncomePageState extends State<AddIncomePage> {
         ),
       );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationHelper.initializeNotifications();
   }
 
   @override

@@ -36,7 +36,7 @@ dependencies:
   firebase_storage: ^11.7.4
   flutter:
     sdk: flutter
-
+  flutter_local_notifications: ^17.1.2
   google_fonts: ^6.2.0
   google_sign_in: ^6.2.1
   image_picker: ^1.1.1
