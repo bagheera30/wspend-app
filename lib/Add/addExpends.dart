@@ -15,9 +15,13 @@ class AddExpendesPage extends StatefulWidget {
 class _AddExpendesPageState extends State<AddExpendesPage> {
   String _selectedCategory = '';
   TextEditingController amount = TextEditingController();
+  num userLimit = 0;
 
   void validasi(String category) async {
     num limit = await getLimit();
+    setState(() {
+      userLimit = limit;
+    });
 
     if (num.tryParse(amount.text) != null) {
       num amountValue = num.parse(amount.text);
@@ -71,34 +75,54 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
   void initState() {
     super.initState();
     NotificationHelper.initializeNotifications();
+    _fetchUserLimit();
   }
 
-  void _showSavedData() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: const Text('Data Tersimpan'),
-          content: const Text('Data income telah disimpan.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        const Home(), // Navigasi ke halaman Regis
-                  ),
-                );
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+  void _fetchUserLimit() async {
+    num limit = await getLimit();
+    setState(() {
+      userLimit = limit;
+    });
   }
+
+   void _showSavedData(num expends, num limit) {
+  num remainingBalance = limit - expends;
+  
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        title: const Text('Data Tersimpan'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Pengeluaran Anda hari ini: $expends'),
+            const SizedBox(height: 8),
+            Text('Saldo Anda sisa: $remainingBalance'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const Home(), // Navigasi ke halaman Home
+                ),
+              );
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
+
 
   void simpan(String category) async {
     final currentUser = FirebaseAuth.instance.currentUser!;
@@ -140,9 +164,9 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
         'timestamp': timestamp,
       });
 
-      _showSavedData();
-      double amount = double.parse(am);
-      NotificationHelper.showExpendsNotification(amount);
+      double amountValue = double.parse(am);
+      _showSavedData(amountValue, userLimit);
+      NotificationHelper.showExpendsNotification(amountValue);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
