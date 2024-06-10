@@ -3,12 +3,13 @@ import 'package:Wspend/provider/cameraHelper.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -28,6 +29,28 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void presSignOut() async {
     await FirebaseAuth.instance.signOut();
+  }
+
+  Future<void> saveProfileImageToFirebase(File image) async {
+    final storage =
+        FirebaseStorage.instanceFor(bucket: 'gs://wspend-509a7.appspot.com');
+    final ref =
+        storage.ref().child('profile_images').child('profile_image.jpg');
+
+    try {
+      await ref.putFile(image);
+      final imageUrl = await ref.getDownloadURL();
+
+      // Simpan URL gambar ke Firestore
+      final userDoc = FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser?.uid);
+      await userDoc.update({'profileImageUrl': imageUrl});
+
+      print('Image URL saved to Firestore: $imageUrl');
+    } catch (e) {
+      print('Error uploading image to Firebase Storage: $e');
+    }
   }
 
   void showEditProfileDialog() {
@@ -122,6 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         _image = File(pickedImage.path);
       });
+      await saveProfileImageToFirebase(_image!);
     }
   }
 
@@ -133,6 +157,27 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         _image = pictureFile;
       });
+
+      final storage =
+          FirebaseStorage.instanceFor(bucket: 'gs://wspend-509a7.appspot.com');
+      final ref =
+          storage.ref().child('profile_images').child('profile_image.jpg');
+
+      try {
+        await ref.putFile(_image!);
+        final imageUrl = await ref.getDownloadURL();
+
+        // Simpan URL gambar ke Firestore
+        final userDoc = FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser?.uid);
+        await userDoc.update({'profileImageUrl': imageUrl});
+
+        print(
+            'Image uploaded to Firebase Storage and URL saved to Firestore: $imageUrl');
+      } catch (e) {
+        print('Error uploading image to Firebase Storage: $e');
+      }
     }
   }
 
@@ -141,21 +186,21 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Pilih Sumber Gambar'),
+          title: const Text('Pilih Sumber Gambar'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.camera),
-                title: Text('Kamera'),
+                leading: const Icon(Icons.camera),
+                title: const Text('Kamera'),
                 onTap: () {
                   _takePicture();
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Galeri'),
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Galeri'),
                 onTap: () {
                   _pickImage(ImageSource.gallery);
                   Navigator.pop(context);
@@ -214,14 +259,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ? FileImage(_image!)
                                       : null,
                                   child: _image == null
-                                      ? Icon(Icons.account_circle, size: 40)
+                                      ? const Icon(Icons.account_circle, size: 40)
                                       : null,
                                 ),
                                 Positioned(
                                   bottom: 0,
                                   right: 0,
                                   child: IconButton(
-                                    icon: Icon(Icons.camera_alt),
+                                    icon: const Icon(Icons.camera_alt),
                                     onPressed: _showImagePickerDialog,
                                   ),
                                 ),

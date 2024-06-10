@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 )),
                             const SizedBox(height: 10),
-                            Container(
+                            SizedBox(
                               width: double.infinity,
                               height: 50,
                               child: Padding(
@@ -279,44 +279,8 @@ class _HomePageState extends State<HomePage> {
                                                 );
                                               } else {
                                                 // Display empty row
-                                                return Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      '',
-                                                      style: GoogleFonts.roboto(
-                                                        textStyle:
-                                                            const TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors.black87,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          '',
-                                                          style: GoogleFonts
-                                                              .roboto(
-                                                            textStyle:
-                                                                const TextStyle(
-                                                              fontSize: 16,
-                                                              color: Colors
-                                                                  .black87,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                );
+                                                return const SizedBox
+                                                    .shrink(); // Mengembalikan widget kosong
                                               }
                                             },
                                           );
@@ -326,17 +290,18 @@ class _HomePageState extends State<HomePage> {
                             ),
                             if (visibleRiwayatCount < riwayatList.length)
                               TextButton(
-                                  onPressed: loadMoreRiwayat,
-                                  child: Text(
-                                    'Load More',
-                                    style: GoogleFonts.roboto(
-                                      textStyle: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                onPressed: loadMoreRiwayat,
+                                child: Text(
+                                  'Load More',
+                                  style: GoogleFonts.roboto(
+                                    textStyle: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                  )),
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ),

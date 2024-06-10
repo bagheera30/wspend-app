@@ -4,12 +4,12 @@ import 'package:camera/camera.dart';
 class CameraDialog extends StatelessWidget {
   final List<CameraDescription> cameras;
 
-  const CameraDialog({required this.cameras});
+  const CameraDialog({super.key, required this.cameras});
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Pilih Kamera'),
+      title: const Text('Pilih Kamera'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: cameras.map((camera) {

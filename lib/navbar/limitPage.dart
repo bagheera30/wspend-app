@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class LimitPage extends StatefulWidget {
   const LimitPage({super.key});
@@ -14,6 +15,7 @@ class LimitPage extends StatefulWidget {
 class _LimitPageState extends State<LimitPage> {
   final TextEditingController _limitc = TextEditingController();
   final userC = FirebaseAuth.instance.currentUser!;
+
   void submit(int newLimit) {
     try {
       final userDocument =
@@ -39,6 +41,34 @@ class _LimitPageState extends State<LimitPage> {
     } catch (e) {
       print('Error updating limit: $e');
     }
+  }
+
+  void _formatCurrency() {
+    final value = _limitc.text.replaceAll(',', '');
+    if (value.isNotEmpty) {
+      final number = int.parse(value);
+      final formatter = NumberFormat("#,###");
+      final newText = formatter.format(number);
+      if (newText != _limitc.text) {
+        _limitc.value = _limitc.value.copyWith(
+          text: newText,
+          selection: TextSelection.collapsed(offset: newText.length),
+        );
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _limitc.addListener(_formatCurrency);
+  }
+
+  @override
+  void dispose() {
+    _limitc.removeListener(_formatCurrency);
+    _limitc.dispose();
+    super.dispose();
   }
 
   @override
@@ -73,6 +103,8 @@ class _LimitPageState extends State<LimitPage> {
             const SizedBox(height: 16),
             TextField(
               controller: _limitc,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: const InputDecoration(
                 labelText: 'Limit pengeluaran',
                 border: OutlineInputBorder(),
@@ -83,7 +115,7 @@ class _LimitPageState extends State<LimitPage> {
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
                 onPressed: () async {
-                  submit(int.parse(_limitc.text));
+                  submit(int.parse(_limitc.text.replaceAll(',', '')));
                 },
                 child: const Text('Simpan'),
               ),

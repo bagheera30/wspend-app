@@ -50,12 +50,12 @@ class _GraphdataState extends State<Graphdata> {
           'Grafik pengeluaran dan pendapatan',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.yellow[600],
+        backgroundColor: Colors.yellow,
       ),
       body: incomeData.isNotEmpty && expendsData.isNotEmpty
           ? Container(
               height: 1000,
-              color: Colors.yellow[600],
+              color: Colors.yellow,
               child: SingleChildScrollView(
                   child: Padding(
                 padding: const EdgeInsets.all(50),
@@ -128,23 +128,36 @@ class _GraphdataState extends State<Graphdata> {
                     SizedBox(
                       height: 500,
                       width: double.infinity,
-                      child: SfCartesianChart(
-                        primaryXAxis: const CategoryAxis(),
-                        series: <CartesianSeries<dynamic, dynamic>>[
-                          LineSeries<Map<String, dynamic>, String>(
-                            dataSource: incomeData,
-                            xValueMapper: (datum, _) => datum['tanggal'],
-                            yValueMapper: (datum, _) => datum['amount'],
-                            name: 'Income',
-                          ),
-                          LineSeries<Map<String, dynamic>, String>(
-                            dataSource: expendsData,
-                            xValueMapper: (datum, _) => datum['tanggal'],
-                            yValueMapper: (datum, _) => datum['amount'],
-                            name: 'Expends',
-                          ),
-                        ],
-                        legend: const Legend(isVisible: true),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white, // Warna abu-abu dengan opacity
+                          borderRadius: BorderRadius.circular(
+                              10), // Mengatur border radius menjadi 10
+                        ),
+                        child: SfCartesianChart(
+                          primaryXAxis: const CategoryAxis(),
+                          series: <CartesianSeries<dynamic, dynamic>>[
+                            LineSeries<Map<String, dynamic>, String>(
+                              dataSource: incomeData,
+                              xValueMapper: (datum, _) => datum['tanggal'],
+                              yValueMapper: (datum, _) => datum['amount'],
+                              name: 'Income',
+                              color: Colors
+                                  .green, // Atur warna garis untuk 'Income'
+                              width: 2, // Atur lebar garis untuk 'Income'
+                            ),
+                            LineSeries<Map<String, dynamic>, String>(
+                              dataSource: expendsData,
+                              xValueMapper: (datum, _) => datum['tanggal'],
+                              yValueMapper: (datum, _) => datum['amount'],
+                              name: 'Expends',
+                              color: Colors
+                                  .red, // Atur warna garis untuk 'Expends'
+                              width: 2, // Atur lebar garis untuk 'Expends'
+                            ),
+                          ],
+                          legend: const Legend(isVisible: true),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -152,7 +165,7 @@ class _GraphdataState extends State<Graphdata> {
                 ),
               )))
           : Container(
-              color: Colors.yellow[600],
+              color: Colors.yellow,
               child: const Center(
                   child: Text('maaf data yang anda masukin tidak ditemukan'))),
     );
