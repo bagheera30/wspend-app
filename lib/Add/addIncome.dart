@@ -72,7 +72,7 @@ class _AddIncomePageState extends State<AddIncomePage> {
 
       int newList = lastList + 1;
       String c = am.replaceAll(",", "");
-      print(c);
+
       // Save the new document with the incremented 'list' value
       await FirebaseFirestore.instance
           .collection('transaksi')

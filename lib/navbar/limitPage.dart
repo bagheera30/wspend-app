@@ -1,9 +1,11 @@
+import 'package:Wspend/provider/inputMoney.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class LimitPage extends StatefulWidget {
-  const LimitPage({Key? key}) : super(key: key);
+  const LimitPage({super.key});
 
   @override
   State<LimitPage> createState() => _LimitPageState();
@@ -20,7 +22,7 @@ class _LimitPageState extends State<LimitPage> {
         backgroundColor: Colors.yellow[600],
         elevation: 0,
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Limit Pengeluaran',
           style: TextStyle(
             color: Colors.black,
@@ -31,34 +33,38 @@ class _LimitPageState extends State<LimitPage> {
       ),
       body: Container(
         color: Colors.yellow[600],
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Masukkan limit yang Anda inginkan:',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextField(
               controller: _limitController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                CurrencyInputFormatter()
+              ],
+              decoration: const InputDecoration(
                 labelText: 'Limit Pengeluaran',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Align(
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
                 onPressed: () {
                   submitLimit();
                 },
-                child: Text('Simpan'),
+                child: const Text('Simpan'),
               ),
             ),
           ],
@@ -74,14 +80,14 @@ class _LimitPageState extends State<LimitPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Peringatan'),
-              content: Text('Mohon masukkan limit pengeluaran.'),
+              title: const Text('Peringatan'),
+              content: const Text('Mohon masukkan limit pengeluaran.'),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('OK'),
+                  child: const Text('OK'),
                 ),
               ],
             );
@@ -89,8 +95,9 @@ class _LimitPageState extends State<LimitPage> {
         );
         return;
       }
+      String lm = _limitController.text.trim().replaceAll(",", "");
 
-      final int newLimit = int.parse(_limitController.text.trim());
+      final int newLimit = int.parse(lm);
 
       final userDocument =
           FirebaseFirestore.instance.collection('users').doc(user!.uid);
@@ -120,14 +127,14 @@ class _LimitPageState extends State<LimitPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Sukses'),
-            content: Text('Limit pengeluaran berhasil diperbarui.'),
+            title: const Text('Sukses'),
+            content: const Text('Limit pengeluaran berhasil diperbarui.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );
@@ -139,14 +146,14 @@ class _LimitPageState extends State<LimitPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Error'),
+            title: const Text('Error'),
             content: Text('Terjadi kesalahan: $e'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );

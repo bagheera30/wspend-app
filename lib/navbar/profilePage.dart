@@ -1,12 +1,10 @@
 import 'dart:io';
-import 'package:Wspend/provider/cameraHelper.dart';
-import 'package:camera/camera.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+// import 'package:path_provider/path_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,10 +15,8 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final currentUser = FirebaseAuth.instance.currentUser;
-  String profileName = ''; // Nilai awal untuk nama profil
-  String phoneNumber = ''; // No Handphone
-  String email = ''; // Email
-  List<CameraDescription> cameras = [];
+  String profileName = '';
+  String phoneNumber = '';
   File? _image;
 
   final userDocument = FirebaseFirestore.instance
@@ -29,28 +25,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void presSignOut() async {
     await FirebaseAuth.instance.signOut();
-  }
-
-  Future<void> saveProfileImageToFirebase(File image) async {
-    final storage =
-        FirebaseStorage.instanceFor(bucket: 'gs://wspend-509a7.appspot.com');
-    final ref =
-        storage.ref().child('profile_images').child('profile_image.jpg');
-
-    try {
-      await ref.putFile(image);
-      final imageUrl = await ref.getDownloadURL();
-
-      // Simpan URL gambar ke Firestore
-      final userDoc = FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser?.uid);
-      await userDoc.update({'profileImageUrl': imageUrl});
-
-      print('Image URL saved to Firestore: $imageUrl');
-    } catch (e) {
-      print('Error uploading image to Firebase Storage: $e');
-    }
   }
 
   void showEditProfileDialog() {
@@ -119,65 +93,27 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    userDocument.snapshots().listen((snapshot) {
-      setState(() {
-        profileName = snapshot.data()?['name'] ?? '';
-        phoneNumber = snapshot.data()?['phone'];
-      });
-    });
-    loadCameras();
-  }
-
-  Future<void> loadCameras() async {
-    try {
-      cameras = await CameraHelper.loadCameras();
-    } catch (e) {
-      print('Error loading cameras: $e');
-    }
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedImage = await ImagePicker().pickImage(source: source);
+  Future<void> getImageFromGallery() async {
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
+      final imageFile = File(pickedImage.path);
       setState(() {
-        _image = File(pickedImage.path);
+        _image = imageFile;
+        Navigator.pop(context);
       });
-      await saveProfileImageToFirebase(_image!);
     }
   }
 
-  Future<void> _takePicture() async {
-    final camera = cameras.first;
-    final pictureFile = await CameraHelper.takePicture(camera);
-
-    if (pictureFile != null) {
+  Future<void> getImageFromCamera() async {
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickedImage != null) {
+      final imageFile = File(pickedImage.path);
       setState(() {
-        _image = pictureFile;
+        _image = imageFile;
+        Navigator.pop(context);
       });
-
-      final storage =
-          FirebaseStorage.instanceFor(bucket: 'gs://wspend-509a7.appspot.com');
-      final ref =
-          storage.ref().child('profile_images').child('profile_image.jpg');
-
-      try {
-        await ref.putFile(_image!);
-        final imageUrl = await ref.getDownloadURL();
-
-        // Simpan URL gambar ke Firestore
-        final userDoc = FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser?.uid);
-        await userDoc.update({'profileImageUrl': imageUrl});
-
-        print(
-            'Image uploaded to Firebase Storage and URL saved to Firestore: $imageUrl');
-      } catch (e) {
-        print('Error uploading image to Firebase Storage: $e');
-      }
     }
   }
 
@@ -186,31 +122,35 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Pilih Sumber Gambar'),
+          title: const Text('Choose Image Source'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.camera),
-                title: const Text('Kamera'),
-                onTap: () {
-                  _takePicture();
-                  Navigator.pop(context);
-                },
-              ),
+                  leading: const Icon(Icons.camera),
+                  title: const Text('Camera'),
+                  onTap: getImageFromCamera),
               ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Galeri'),
-                onTap: () {
-                  _pickImage(ImageSource.gallery);
-                  Navigator.pop(context);
-                },
-              ),
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Gallery'),
+                  onTap: getImageFromGallery),
             ],
           ),
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    userDocument.snapshots().listen((snapshot) {
+      setState(() {
+        profileName = snapshot.data()?['name'] ?? '';
+        phoneNumber = snapshot.data()?['phone'];
+      });
+    });
   }
 
   @override
@@ -227,13 +167,10 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Text(
                   "Profile",
-                  style: GoogleFonts.roboto(
-                    textStyle: const TextStyle(
+                  style: TextStyle(
                       fontSize: 20,
                       color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 30),
                 Container(
@@ -259,7 +196,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ? FileImage(_image!)
                                       : null,
                                   child: _image == null
-                                      ? const Icon(Icons.account_circle, size: 40)
+                                      ? const Icon(Icons.account_circle,
+                                          size: 40)
                                       : null,
                                 ),
                                 Positioned(
@@ -287,12 +225,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                         children: [
                                           Text(
                                             profileName,
-                                            style: GoogleFonts.roboto(
-                                              textStyle: const TextStyle(
+                                            style: TextStyle(
                                                 fontSize: 30,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
+                                                fontWeight: FontWeight.bold),
                                           ),
                                           IconButton(
                                             onPressed: showEditProfileDialog,
@@ -330,9 +265,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(width: 8),
                       Text(
                         'Keluar Akun',
-                        style: GoogleFonts.roboto(
-                          textStyle: const TextStyle(fontSize: 20),
-                        ),
+                        style: TextStyle(fontSize: 20),
                       ),
                     ],
                   ),

@@ -55,8 +55,8 @@ class _HomePageState extends State<HomePage> {
 
   void loadMoreRiwayat() {
     setState(() {
-      if (visibleRiwayatCount + 5 <= riwayatList.length) {
-        visibleRiwayatCount += 5;
+      if (visibleRiwayatCount + 10 <= riwayatList.length) {
+        visibleRiwayatCount += 10;
       } else {
         visibleRiwayatCount = riwayatList.length;
       }
