@@ -1,45 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class LimitPage extends StatefulWidget {
-  const LimitPage({super.key});
+  const LimitPage({Key? key}) : super(key: key);
 
   @override
   State<LimitPage> createState() => _LimitPageState();
 }
 
 class _LimitPageState extends State<LimitPage> {
-  final TextEditingController _limitc = TextEditingController();
-  final userC = FirebaseAuth.instance.currentUser!;
-  void submit(int newLimit) {
-    try {
-      final userDocument =
-          FirebaseFirestore.instance.collection('users').doc(userC.uid);
-
-      userDocument.get().then((snapshot) {
-        if (snapshot.exists) {
-          userDocument
-              .set({
-                'limit': newLimit,
-              }, SetOptions(merge: true))
-              .then((value) => print('Limit updated successfully'))
-              .catchError((error) => print('Failed to update limit: $error'));
-        } else {
-          userDocument
-              .update({
-                'limit': newLimit,
-              })
-              .then((value) => print('Limit updated successfully'))
-              .catchError((error) => print('Failed to update limit: $error'));
-        }
-      });
-    } catch (e) {
-      print('Error updating limit: $e');
-    }
-  }
+  final TextEditingController _limitController = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -48,44 +20,45 @@ class _LimitPageState extends State<LimitPage> {
         backgroundColor: Colors.yellow[600],
         elevation: 0,
         centerTitle: true,
+        title: Text(
+          'Limit Pengeluaran',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         leading: Container(), // Menghilangkan tombol kembali
-        title: Text('Limit pengeluaran',
-            style: GoogleFonts.roboto(
-              textStyle: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            )),
       ),
       body: Container(
         color: Colors.yellow[600],
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Silakan masukkan limit yang Anda inginkan:',
-                style: GoogleFonts.roboto(
-                  textStyle: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )),
-            const SizedBox(height: 16),
+            Text(
+              'Masukkan limit yang Anda inginkan:',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 16),
             TextField(
-              controller: _limitc,
-              decoration: const InputDecoration(
-                labelText: 'Limit pengeluaran',
+              controller: _limitController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Limit Pengeluaran',
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Align(
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
-                onPressed: () async {
-                  submit(int.parse(_limitc.text));
+                onPressed: () {
+                  submitLimit();
                 },
-                child: const Text('Simpan'),
+                child: Text('Simpan'),
               ),
             ),
           ],
@@ -93,4 +66,93 @@ class _LimitPageState extends State<LimitPage> {
       ),
     );
   }
+
+  void submitLimit() async {
+    try {
+      if (_limitController.text.isEmpty) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Peringatan'),
+              content: Text('Mohon masukkan limit pengeluaran.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+        return;
+      }
+
+      final int newLimit = int.parse(_limitController.text.trim());
+
+      final userDocument = FirebaseFirestore.instance.collection('users').doc(user!.uid);
+
+      // Menghitung jumlah hari dalam bulan ini
+      final now = DateTime.now();
+      final daysInMonth = DateUtils.getDaysInMonth(now.year, now.month);
+
+      // Memperbarui limit harian
+      final double dailyLimit = newLimit / daysInMonth;
+
+      final Map<String, dynamic> data = {
+        'limit': dailyLimit,
+      };
+
+      // Memeriksa apakah dokumen pengguna sudah ada di Firestore
+      final DocumentSnapshot snapshot = await userDocument.get();
+
+      if (snapshot.exists) {
+        await userDocument.update(data);
+      } else {
+        await userDocument.set(data);
+      }
+
+      // Menampilkan pesan sukses
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Sukses'),
+            content: Text('Limit pengeluaran berhasil diperbarui.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      // Menampilkan pesan error jika terjadi masalah
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Terjadi kesalahan: $e'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 }
+
+
