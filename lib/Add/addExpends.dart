@@ -85,44 +85,47 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
     setState(() {
       userLimit = limit;
     });
+
   }
 
-  void _showSavedData(num expends, num limit) {
-    num remainingBalance = limit - expends;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: const Text('Data Tersimpan'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Pengeluaran Anda hari ini: $expends'),
-              const SizedBox(height: 8),
-              Text('Saldo Anda sisa: $remainingBalance'),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        const Home(), // Navigasi ke halaman Home
-                  ),
-                );
-              },
-              child: const Text('OK'),
-            ),
+   void _showSavedData(num expends, num limit) {
+  num remainingBalance = limit - expends;
+  
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        title: const Text('Data Tersimpan'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Pengeluaran Anda hari ini: $expends'),
+            const SizedBox(height: 8),
+            Text('Saldo Anda sisa: $remainingBalance'),
           ],
-        );
-      },
-    );
-  }
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const Home(), // Navigasi ke halaman Home
+                ),
+              );
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
+
 
   void simpan(String category) async {
     final currentUser = FirebaseAuth.instance.currentUser!;
@@ -164,7 +167,9 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
         'timestamp': timestamp,
       });
 
+
       double amountValue = double.parse(am.replaceAll(",", ""));
+
       _showSavedData(amountValue, userLimit);
       NotificationHelper.showExpendsNotification(amountValue);
     } catch (e) {
