@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key});
+  const Login({Key? key}) : super(key: key);
 
   @override
   State<Login> createState() => _LoginState();
@@ -18,6 +18,7 @@ class _LoginState extends State<Login> {
 
   bool isEmailValid = true;
   bool isPasswordVisible = false;
+  bool isLoading = false; // State untuk menampilkan loading indicator
 
   final _authProvider = AuthProvider();
 
@@ -31,7 +32,7 @@ class _LoginState extends State<Login> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const Regis(), // Navigasi ke halaman Regis
+        builder: (context) => const Regis(),
       ),
     );
   }
@@ -47,20 +48,32 @@ class _LoginState extends State<Login> {
       return;
     }
 
-    try {
-      // Menampilkan CircularProgressIndicator() sebelum await _authProvider.signIn()
+    setState(() {
+      isLoading = true; // Set isLoading true ketika mulai submit form
+    });
 
+    try {
+      // Melakukan login dengan Firebase Auth
       await _authProvider.signIn(email, password);
+
+      // Memeriksa apakah data pengguna sudah tersimpan di cache dan mencetak ke terminal
+      final cachedUserData = await _authProvider.getCachedUserData();
+      print('Cached User Data: $cachedUserData');
+
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const Home(), // Navigasi ke halaman Regis
+          builder: (context) => const Home(),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
       );
+    } finally {
+      setState(() {
+        isLoading = false; // Set isLoading false setelah selesai verifikasi
+      });
     }
   }
 
@@ -113,8 +126,8 @@ class _LoginState extends State<Login> {
                           TextFormField(
                             controller: emailController,
                             keyboardType: TextInputType.emailAddress,
-                            decoration: const InputDecoration(
-                                labelText: 'Email Address'),
+                            decoration:
+                                const InputDecoration(labelText: 'Email Address'),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter an email address';
@@ -123,7 +136,7 @@ class _LoginState extends State<Login> {
                                   .hasMatch(value)) {
                                 return 'Please enter a valid email address @';
                               }
-                              return null; // Return null if the input is valid
+                              return null;
                             },
                           )
                         ],
@@ -157,12 +170,14 @@ class _LoginState extends State<Login> {
                   ],
                 ),
                 const SizedBox(height: 50),
-                Buttonwinget(
-                  onPress: submitForm,
-                  text: 'Masuk',
-                  minimumsize1: double.infinity,
-                  minimumsize2: 50,
-                ),
+                isLoading
+                    ? CircularProgressIndicator() // Tampilkan jika isLoading true
+                    : Buttonwinget(
+                        onPress: submitForm,
+                        text: 'Masuk',
+                        minimumsize1: double.infinity,
+                        minimumsize2: 50,
+                      ),
                 const SizedBox(height: 18),
                 const SizedBox(
                   height: 5,
@@ -175,7 +190,7 @@ class _LoginState extends State<Login> {
                       style: GoogleFonts.roboto(
                           textStyle: const TextStyle(fontSize: 18)),
                     ),
-                    const SizedBox(width: 0), // Menambahkan space horizontal
+                    const SizedBox(width: 0),
                     TextButton(
                       onPressed: goToRegisterPage,
                       child: Text(
@@ -194,3 +209,4 @@ class _LoginState extends State<Login> {
     );
   }
 }
+

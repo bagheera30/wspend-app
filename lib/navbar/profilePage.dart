@@ -1,13 +1,21 @@
 import 'dart:io';
+<<<<<<< HEAD
 
 import 'package:Wspend/provider/firebaseStore.dart';
+=======
+>>>>>>> 1a48b3f4e7620cbe269971bffe3f8352ffeecf37
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+<<<<<<< HEAD
 import 'package:path_provider/path_provider.dart';
 
 import 'package:http/http.dart' as http;
+=======
+import 'package:shared_preferences/shared_preferences.dart';
+
+>>>>>>> 1a48b3f4e7620cbe269971bffe3f8352ffeecf37
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -21,21 +29,25 @@ class _ProfilePageState extends State<ProfilePage> {
   String profileName = '';
   String phoneNumber = '';
   File? _image;
+<<<<<<< HEAD
   FirebaseStorageService fs = FirebaseStorageService();
   final userDocument = FirebaseFirestore.instance
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser?.uid);
+=======
+>>>>>>> 1a48b3f4e7620cbe269971bffe3f8352ffeecf37
 
   void presSignOut() async {
     await FirebaseAuth.instance.signOut();
+    // Hapus data yang tersimpan di SharedPreferences saat keluar
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
   }
 
   void showEditProfileDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        String editedProfileName = profileName;
-        String editedPassword = '';
 
         return AlertDialog(
           title: const Text('Edit Profile'),
@@ -44,7 +56,6 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               TextField(
                 onChanged: (value) {
-                  editedProfileName = value;
                 },
                 decoration: const InputDecoration(
                   labelText: 'Profile Name',
@@ -52,7 +63,6 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               TextField(
                 onChanged: (value) {
-                  editedPassword = value;
                 },
                 decoration: const InputDecoration(
                   labelText: 'Password',
@@ -67,38 +77,47 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.pop(context);
               },
               child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                // Update profile name
-                setState(() {
-                  profileName = editedProfileName;
-                });
-                await userDocument.update({'name': editedProfileName});
-
-                // Update password
-                if (editedPassword.isNotEmpty) {
-                  try {
-                    await currentUser?.updatePassword(editedPassword);
-                    print('Password updated successfully');
-                  } catch (e) {
-                    print('Error updating password: $e');
-                  }
-                }
-
-                Navigator.pop(context);
-              },
-              child: const Text('Save'),
-            ),
+            )
           ],
         );
       },
     );
   }
 
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCachedUserData();
+    loadCameras();
+  }
+
+  Future<void> _fetchCachedUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      profileName = prefs.getString('user_name') ?? '';
+      phoneNumber = prefs.getString('user_phone') ?? '';
+      email = prefs.getString('user_email') ?? '';
+    });
+  }
+
+  Future<void> loadCameras() async {
+    try {
+      cameras = await CameraHelper.loadCameras();
+    } catch (e) {
+      print('Error loading cameras: $e');
+    }
+  }
+
+
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedImage = await ImagePicker().pickImage(source: source);
+
   Future<void> getImageFromGallery() async {
     final pickedImage =
         await ImagePicker().pickImage(source: ImageSource.gallery);
+
     if (pickedImage != null) {
       final imageFile = File(pickedImage.path);
       await FirebaseStorageService()
