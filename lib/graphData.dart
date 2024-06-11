@@ -1,13 +1,16 @@
+import 'package:Wspend/winget/customChart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+
 import 'package:Wspend/getData/getDataRiwayat.dart';
+// Import widget CustomChart
 
 class Graphdata extends StatefulWidget {
   final String bulan;
   final String tahun;
 
-  const Graphdata({super.key, required this.bulan, required this.tahun});
+  const Graphdata({Key? key, required this.bulan, required this.tahun})
+      : super(key: key);
 
   @override
   _GraphdataState createState() => _GraphdataState();
@@ -16,8 +19,8 @@ class Graphdata extends StatefulWidget {
 class _GraphdataState extends State<Graphdata> {
   late List<Map<String, dynamic>> incomeData = [];
   late List<Map<String, dynamic>> expendsData = [];
-  late Future<num>? totalIncome;
-  late Future<num>? totalExpends;
+  Future<num>? totalIncome;
+  Future<num>? totalExpends;
 
   @override
   void initState() {
@@ -28,6 +31,7 @@ class _GraphdataState extends State<Graphdata> {
   }
 
   final formatCurrency = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp');
+
   Future<void> fetchData() async {
     try {
       incomeData =
@@ -50,111 +54,136 @@ class _GraphdataState extends State<Graphdata> {
           'Grafik pengeluaran dan pendapatan',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.yellow[600],
+        backgroundColor: Colors.yellow,
       ),
       body: incomeData.isNotEmpty && expendsData.isNotEmpty
           ? Container(
               height: 1000,
-              color: Colors.yellow[600],
+              color: Colors.yellow,
               child: SingleChildScrollView(
-                  child: Padding(
-                padding: const EdgeInsets.all(50),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        FutureBuilder<num>(
-                          future: totalIncome,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const CircularProgressIndicator();
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else {
-                              final incomeTotal = snapshot.data;
-                              return SizedBox(
-                                width: 130,
-                                child: TextFormField(
-                                  initialValue:
-                                      formatCurrency.format(incomeTotal ?? 0),
-                                  decoration: const InputDecoration(
-                                    labelText: 'Total Income',
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.black, width: 3.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(50),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          FutureBuilder<num>(
+                            future: totalIncome,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                final incomeTotal = snapshot.data;
+                                return SizedBox(
+                                  width: 130,
+                                  child: TextFormField(
+                                    initialValue:
+                                        formatCurrency.format(incomeTotal ?? 0),
+                                    decoration: const InputDecoration(
+                                      labelText: 'Total Income',
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.black, width: 3.0),
+                                      ),
                                     ),
+                                    readOnly: true,
                                   ),
-                                  readOnly: true,
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                        const SizedBox(
-                          width: 50,
-                        ),
-                        FutureBuilder<num>(
-                          future: totalExpends,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const CircularProgressIndicator();
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else {
-                              final expendsTotal = snapshot.data;
-                              return SizedBox(
-                                width: 130,
-                                child: TextFormField(
-                                  initialValue:
-                                      formatCurrency.format(expendsTotal),
-                                  decoration: const InputDecoration(
-                                    labelText: 'Total Expends',
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.black, width: 2.0),
-                                    ),
-                                  ),
-                                  readOnly: true,
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      height: 500,
-                      width: double.infinity,
-                      child: SfCartesianChart(
-                        primaryXAxis: const CategoryAxis(),
-                        series: <CartesianSeries<dynamic, dynamic>>[
-                          LineSeries<Map<String, dynamic>, String>(
-                            dataSource: incomeData,
-                            xValueMapper: (datum, _) => datum['tanggal'],
-                            yValueMapper: (datum, _) => datum['amount'],
-                            name: 'Income',
+                                );
+                              }
+                            },
                           ),
-                          LineSeries<Map<String, dynamic>, String>(
-                            dataSource: expendsData,
-                            xValueMapper: (datum, _) => datum['tanggal'],
-                            yValueMapper: (datum, _) => datum['amount'],
-                            name: 'Expends',
+                          const SizedBox(width: 50),
+                          FutureBuilder<num>(
+                            future: totalExpends,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                final expendsTotal = snapshot.data;
+                                return SizedBox(
+                                  width: 130,
+                                  child: TextFormField(
+                                    initialValue:
+                                        formatCurrency.format(expendsTotal),
+                                    decoration: const InputDecoration(
+                                      labelText: 'Total Expends',
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.black, width: 2.0),
+                                      ),
+                                    ),
+                                    readOnly: true,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(width: 50),
+                          FutureBuilder<num>(
+                            future: totalExpends,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                final expendsTotal = snapshot.data;
+                                return SizedBox(
+                                  width: 130,
+                                  child: TextFormField(
+                                    initialValue:
+                                        formatCurrency.format(expendsTotal),
+                                    decoration: const InputDecoration(
+                                      labelText: 'Total Expends',
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.black, width: 2.0),
+                                      ),
+                                    ),
+                                    readOnly: true,
+                                  ),
+                                );
+                              }
+                            },
                           ),
                         ],
-                        legend: const Legend(isVisible: true),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomChart(
+                              chartData: incomeData,
+                              name: "income",
+                            ),
+                          ),
+                          const SizedBox(width: 20), // Jarak antara dua grafik
+                          Expanded(
+                            child: CustomChart(
+                              chartData: expendsData,
+                              name: "Expends",
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
-              )))
+              ),
+            )
           : Container(
-              color: Colors.yellow[600],
+              color: Colors.yellow,
               child: const Center(
-                  child: Text('maaf data yang anda masukin tidak ditemukan'))),
+                  child: Text('Maaf, data yang Anda masukkan tidak ditemukan')),
+            ),
     );
   }
 }

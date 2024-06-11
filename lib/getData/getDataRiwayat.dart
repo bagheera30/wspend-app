@@ -89,7 +89,7 @@ Future<List<Map<String, dynamic>>> getDataByMonthAndYears(
   } catch (e) {
     print('Terjadi kesalahan: $e');
   }
-  print(result);
+
   return result;
 }
 

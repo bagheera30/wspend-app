@@ -1,11 +1,10 @@
 import 'dart:io';
-import 'package:Wspend/provider/cameraHelper.dart';
-import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -16,10 +15,8 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final currentUser = FirebaseAuth.instance.currentUser;
-  String profileName = ''; // Nilai awal untuk nama profil
-  String phoneNumber = ''; // No Handphone
-  String email = ''; // Email
-  List<CameraDescription> cameras = [];
+  String profileName = '';
+  String phoneNumber = '';
   File? _image;
 
   void presSignOut() async {
@@ -69,6 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+
   @override
   void initState() {
     super.initState();
@@ -97,20 +95,28 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _pickImage(ImageSource source) async {
     final pickedImage = await ImagePicker().pickImage(source: source);
+
+  Future<void> getImageFromGallery() async {
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+
     if (pickedImage != null) {
+      final imageFile = File(pickedImage.path);
       setState(() {
-        _image = File(pickedImage.path);
+        _image = imageFile;
+        Navigator.pop(context);
       });
     }
   }
 
-  Future<void> _takePicture() async {
-    final camera = cameras.first;
-    final pictureFile = await CameraHelper.takePicture(camera);
-
-    if (pictureFile != null) {
+  Future<void> getImageFromCamera() async {
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickedImage != null) {
+      final imageFile = File(pickedImage.path);
       setState(() {
-        _image = pictureFile;
+        _image = imageFile;
+        Navigator.pop(context);
       });
     }
   }
@@ -120,31 +126,35 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Pilih Sumber Gambar'),
+          title: const Text('Choose Image Source'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.camera),
-                title: Text('Kamera'),
-                onTap: () {
-                  _takePicture();
-                  Navigator.pop(context);
-                },
-              ),
+                  leading: const Icon(Icons.camera),
+                  title: const Text('Camera'),
+                  onTap: getImageFromCamera),
               ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Galeri'),
-                onTap: () {
-                  _pickImage(ImageSource.gallery);
-                  Navigator.pop(context);
-                },
-              ),
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Gallery'),
+                  onTap: getImageFromGallery),
             ],
           ),
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    userDocument.snapshots().listen((snapshot) {
+      setState(() {
+        profileName = snapshot.data()?['name'] ?? '';
+        phoneNumber = snapshot.data()?['phone'];
+      });
+    });
   }
 
   @override
@@ -161,13 +171,10 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Text(
                   "Profile",
-                  style: GoogleFonts.roboto(
-                    textStyle: const TextStyle(
+                  style: TextStyle(
                       fontSize: 20,
                       color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 30),
                 Container(
@@ -193,14 +200,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ? FileImage(_image!)
                                       : null,
                                   child: _image == null
-                                      ? Icon(Icons.account_circle, size: 40)
+                                      ? const Icon(Icons.account_circle,
+                                          size: 40)
                                       : null,
                                 ),
                                 Positioned(
                                   bottom: 0,
                                   right: 0,
                                   child: IconButton(
-                                    icon: Icon(Icons.camera_alt),
+                                    icon: const Icon(Icons.camera_alt),
                                     onPressed: _showImagePickerDialog,
                                   ),
                                 ),
@@ -221,12 +229,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                         children: [
                                           Text(
                                             profileName,
-                                            style: GoogleFonts.roboto(
-                                              textStyle: const TextStyle(
+                                            style: TextStyle(
                                                 fontSize: 30,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
+                                                fontWeight: FontWeight.bold),
                                           ),
                                           IconButton(
                                             onPressed: showEditProfileDialog,
@@ -264,9 +269,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(width: 8),
                       Text(
                         'Keluar Akun',
-                        style: GoogleFonts.roboto(
-                          textStyle: const TextStyle(fontSize: 20),
-                        ),
+                        style: TextStyle(fontSize: 20),
                       ),
                     ],
                   ),

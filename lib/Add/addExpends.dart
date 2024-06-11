@@ -1,9 +1,11 @@
 import 'package:Wspend/getData/getDataRiwayat.dart';
 import 'package:Wspend/home.dart';
 import 'package:Wspend/provider/Notifikasi.dart';
+import 'package:Wspend/provider/inputMoney.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AddExpendesPage extends StatefulWidget {
   const AddExpendesPage({super.key});
@@ -23,8 +25,8 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
       userLimit = limit;
     });
 
-    if (num.tryParse(amount.text) != null) {
-      num amountValue = num.parse(amount.text);
+    if (num.tryParse(amount.text.replaceAll(",", "")) != null) {
+      num amountValue = num.parse(amount.text.replaceAll(",", ""));
 
       if (amountValue <= limit) {
         simpan(category);
@@ -83,6 +85,7 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
     setState(() {
       userLimit = limit;
     });
+
   }
 
    void _showSavedData(num expends, num limit) {
@@ -159,12 +162,14 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
           .add({
         'uid': currentUser.uid,
         'list': newList,
-        'amount': int.parse(am),
+        'amount': int.parse(am.replaceAll(",", "")),
         'category': category,
         'timestamp': timestamp,
       });
 
-      double amountValue = double.parse(am);
+
+      double amountValue = double.parse(am.replaceAll(",", ""));
+
       _showSavedData(amountValue, userLimit);
       NotificationHelper.showExpendsNotification(amountValue);
     } catch (e) {
@@ -201,6 +206,10 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
                 TextFormField(
                   controller: amount,
                   keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    CurrencyInputFormatter()
+                  ],
                   decoration: const InputDecoration(
                     labelText: 'Expends',
                     border: OutlineInputBorder(),

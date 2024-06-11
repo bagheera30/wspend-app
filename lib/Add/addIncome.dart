@@ -1,8 +1,11 @@
 import 'package:Wspend/home.dart';
 import 'package:Wspend/provider/Notifikasi.dart';
+import 'package:Wspend/provider/inputMoney.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AddIncomePage extends StatefulWidget {
   const AddIncomePage({super.key});
@@ -68,6 +71,7 @@ class _AddIncomePageState extends State<AddIncomePage> {
       }
 
       int newList = lastList + 1;
+      String c = am.replaceAll(",", "");
 
       // Save the new document with the incremented 'list' value
       await FirebaseFirestore.instance
@@ -77,13 +81,13 @@ class _AddIncomePageState extends State<AddIncomePage> {
           .add({
         'uid': currentUser.uid,
         'list': newList,
-        'amount': int.parse(am),
+        'amount': int.parse(c),
         'category': category,
         'timestamp': timestamp,
       });
 
       _showSavedData();
-      double amount = double.parse(am);
+      double amount = double.parse(c);
       NotificationHelper.showIncomeNotification(amount);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -125,6 +129,12 @@ class _AddIncomePageState extends State<AddIncomePage> {
                 TextFormField(
                   controller: amount,
                   keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    // Fit the validating format.
+                    //fazer o formater para dinheiro
+                    CurrencyInputFormatter()
+                  ],
                   decoration: const InputDecoration(
                     labelText: 'income',
                     border: OutlineInputBorder(),
