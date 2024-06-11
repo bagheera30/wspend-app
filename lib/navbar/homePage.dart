@@ -38,6 +38,16 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  bool isDataLoaded = false; // Variabel penanda apakah data sudah dimuat
+
+  Future<void> loadDataOnce() async {
+    if (!isDataLoaded) {
+      await getData2();
+      isDataLoaded =
+          true; // Set variabel penanda menjadi true setelah data dimuat
+    }
+  }
+
   void sumsaldo() async {
     num income = await sumSaldo('income');
     num expends = await sumSaldo('expends');
@@ -212,82 +222,80 @@ class _HomePageState extends State<HomePage> {
                                 )),
                             const SizedBox(height: 30),
                             Expanded(
-                              child: FutureBuilder<void>(
-                                future: getData2(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  } else if (snapshot.hasError) {
-                                    return Center(
-                                      child: Text('Error: ${snapshot.error}'),
-                                    );
-                                  } else {
-                                    return riwayatList.isEmpty
-                                        ? const Center(
-                                            child: Text('No history available'),
-                                          )
-                                        : ListView.builder(
-                                            itemCount: visibleRiwayatCount,
-                                            itemBuilder: (context, index) {
-                                              if (index < riwayatList.length) {
-                                                String pemasukanText =
-                                                    riwayatList[index] > 0
-                                                        ? 'Pemasukan '
-                                                        : 'Pengeluaran ';
+                                child: FutureBuilder<void>(
+                              future: loadDataOnce(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Center(
+                                    child: Text('Error: ${snapshot.error}'),
+                                  );
+                                } else {
+                                  return riwayatList.isEmpty
+                                      ? const Center(
+                                          child: Text('No history available'),
+                                        )
+                                      : ListView.builder(
+                                          itemCount: visibleRiwayatCount,
+                                          itemBuilder: (context, index) {
+                                            if (index < riwayatList.length) {
+                                              String pemasukanText =
+                                                  riwayatList[index] > 0
+                                                      ? 'Pemasukan '
+                                                      : 'Pengeluaran ';
 
-                                                return Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      pemasukanText,
-                                                      style: GoogleFonts.roboto(
-                                                        textStyle:
-                                                            const TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors.black87,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
+                                              return Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    pemasukanText,
+                                                    style: GoogleFonts.roboto(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.black87,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                       ),
                                                     ),
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          formatCurrency.format(
-                                                              angkaList[index]),
-                                                          style: GoogleFonts
-                                                              .roboto(
-                                                            textStyle:
-                                                                const TextStyle(
-                                                              fontSize: 16,
-                                                              color: Colors
-                                                                  .black87,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        formatCurrency.format(
+                                                            angkaList[index]),
+                                                        style:
+                                                            GoogleFonts.roboto(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                            fontSize: 16,
+                                                            color:
+                                                                Colors.black87,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                           ),
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                );
-                                              } else {
-                                                // Display empty row
-                                                return const SizedBox
-                                                    .shrink(); // Mengembalikan widget kosong
-                                              }
-                                            },
-                                          );
-                                  }
-                                },
-                              ),
-                            ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              );
+                                            } else {
+                                              // Display empty row
+                                              return const SizedBox
+                                                  .shrink(); // Mengembalikan widget kosong
+                                            }
+                                          },
+                                        );
+                                }
+                              },
+                            )),
                             if (visibleRiwayatCount < riwayatList.length)
                               TextButton(
                                 onPressed: loadMoreRiwayat,

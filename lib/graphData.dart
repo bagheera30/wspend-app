@@ -1,9 +1,8 @@
-import 'package:Wspend/winget/customChart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:Wspend/getData/getDataRiwayat.dart';
-// Import widget CustomChart
+import 'package:Wspend/winget/customChart.dart';
 
 class Graphdata extends StatefulWidget {
   final String bulan;
@@ -56,7 +55,7 @@ class _GraphdataState extends State<Graphdata> {
         ),
         backgroundColor: Colors.yellow,
       ),
-      body: incomeData.isNotEmpty && expendsData.isNotEmpty
+      body: incomeData.isNotEmpty || expendsData.isNotEmpty
           ? Container(
               height: 1000,
               color: Colors.yellow,
@@ -109,37 +108,8 @@ class _GraphdataState extends State<Graphdata> {
                                 return SizedBox(
                                   width: 130,
                                   child: TextFormField(
-                                    initialValue:
-                                        formatCurrency.format(expendsTotal),
-                                    decoration: const InputDecoration(
-                                      labelText: 'Total Expends',
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors.black, width: 2.0),
-                                      ),
-                                    ),
-                                    readOnly: true,
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                          const SizedBox(width: 50),
-                          FutureBuilder<num>(
-                            future: totalExpends,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const CircularProgressIndicator();
-                              } else if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
-                              } else {
-                                final expendsTotal = snapshot.data;
-                                return SizedBox(
-                                  width: 130,
-                                  child: TextFormField(
-                                    initialValue:
-                                        formatCurrency.format(expendsTotal),
+                                    initialValue: formatCurrency
+                                        .format(expendsTotal ?? 0),
                                     decoration: const InputDecoration(
                                       labelText: 'Total Expends',
                                       border: OutlineInputBorder(
@@ -156,23 +126,28 @@ class _GraphdataState extends State<Graphdata> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomChart(
-                              chartData: incomeData,
-                              name: "income",
+                      if (incomeData.isNotEmpty)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CustomChart(
+                                chartData: incomeData,
+                                name: "income",
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 20), // Jarak antara dua grafik
-                          Expanded(
-                            child: CustomChart(
-                              chartData: expendsData,
-                              name: "Expends",
+                          ],
+                        ),
+                      if (expendsData.isNotEmpty)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CustomChart(
+                                chartData: expendsData,
+                                name: "Expends",
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -182,7 +157,8 @@ class _GraphdataState extends State<Graphdata> {
           : Container(
               color: Colors.yellow,
               child: const Center(
-                  child: Text('Maaf, data yang Anda masukkan tidak ditemukan')),
+                child: Text('Maaf, data yang Anda masukkan tidak ditemukan'),
+              ),
             ),
     );
   }

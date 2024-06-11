@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class AddExpendesPage extends StatefulWidget {
   const AddExpendesPage({super.key});
@@ -38,7 +39,7 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Peringatan'),
-              content: const Text('Jumlah melebihi batas limit.'),
+              content: const Text('anda melebihi batas limit harian.'),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -89,7 +90,8 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
 
   void _showSavedData(num expends, num limit) {
     num remainingBalance = limit - expends;
-
+    final format = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp');
+    final expend = format.format(expends);
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -100,7 +102,7 @@ class _AddExpendesPageState extends State<AddExpendesPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Pengeluaran Anda hari ini: $expends'),
+              Text('Pengeluaran Anda hari ini: $expend'),
               const SizedBox(height: 8),
               Text('Saldo Anda sisa: $remainingBalance'),
             ],

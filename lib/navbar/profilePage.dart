@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:Wspend/provider/firebaseStore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'package:path_provider/path_provider.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'package:http/http.dart' as http;
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -18,7 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String profileName = '';
   String phoneNumber = '';
   File? _image;
-
+  FirebaseStorageService fs = FirebaseStorageService();
   final userDocument = FirebaseFirestore.instance
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser?.uid);
@@ -98,10 +101,14 @@ class _ProfilePageState extends State<ProfilePage> {
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       final imageFile = File(pickedImage.path);
+      await FirebaseStorageService()
+          .uploadImage('profile/${currentUser!.uid}', imageFile);
+      await getImage();
       setState(() {
         _image = imageFile;
-        Navigator.pop(context);
       });
+
+      Navigator.pop(context);
     }
   }
 
@@ -110,10 +117,33 @@ class _ProfilePageState extends State<ProfilePage> {
         await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedImage != null) {
       final imageFile = File(pickedImage.path);
+      await getImage();
+      await FirebaseStorageService()
+          .uploadImage('profile/${currentUser!.uid}', imageFile);
       setState(() {
         _image = imageFile;
-        Navigator.pop(context);
       });
+
+      Navigator.pop(context);
+    }
+  }
+
+  Future<void> getImage() async {
+    try {
+      final imageUrl = await FirebaseStorageService()
+          .getImageUrl('profile/${currentUser!.uid}');
+      // Download the image from the URL
+      var response = await http.get(Uri.parse(imageUrl));
+      Directory tempDir = await getTemporaryDirectory();
+      File tempFile = File('${tempDir.path}/temp_image.jpg');
+      await tempFile.writeAsBytes(response.bodyBytes);
+
+      setState(() {
+        _image = tempFile;
+      });
+    } catch (error) {
+      // Handle the error here
+      print('Error getting image: $error');
     }
   }
 
@@ -144,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-
+    getImage();
     userDocument.snapshots().listen((snapshot) {
       setState(() {
         profileName = snapshot.data()?['name'] ?? '';
