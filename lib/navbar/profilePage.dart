@@ -1,21 +1,17 @@
 import 'dart:io';
-<<<<<<< HEAD
 
 import 'package:Wspend/provider/firebaseStore.dart';
-=======
->>>>>>> 1a48b3f4e7620cbe269971bffe3f8352ffeecf37
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-<<<<<<< HEAD
+
 import 'package:path_provider/path_provider.dart';
 
 import 'package:http/http.dart' as http;
-=======
-import 'package:shared_preferences/shared_preferences.dart';
 
->>>>>>> 1a48b3f4e7620cbe269971bffe3f8352ffeecf37
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -27,15 +23,14 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final currentUser = FirebaseAuth.instance.currentUser;
   String profileName = '';
+  String email = '';
   String phoneNumber = '';
   File? _image;
-<<<<<<< HEAD
+
   FirebaseStorageService fs = FirebaseStorageService();
   final userDocument = FirebaseFirestore.instance
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser?.uid);
-=======
->>>>>>> 1a48b3f4e7620cbe269971bffe3f8352ffeecf37
 
   void presSignOut() async {
     await FirebaseAuth.instance.signOut();
@@ -48,22 +43,19 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-
         return AlertDialog(
           title: const Text('Edit Profile'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                onChanged: (value) {
-                },
+                onChanged: (value) {},
                 decoration: const InputDecoration(
                   labelText: 'Profile Name',
                 ),
               ),
               TextField(
-                onChanged: (value) {
-                },
+                onChanged: (value) {},
                 decoration: const InputDecoration(
                   labelText: 'Password',
                 ),
@@ -84,14 +76,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchCachedUserData();
-    loadCameras();
-  }
-
   Future<void> _fetchCachedUserData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -100,19 +84,6 @@ class _ProfilePageState extends State<ProfilePage> {
       email = prefs.getString('user_email') ?? '';
     });
   }
-
-  Future<void> loadCameras() async {
-    try {
-      cameras = await CameraHelper.loadCameras();
-    } catch (e) {
-      print('Error loading cameras: $e');
-    }
-  }
-
-
-
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedImage = await ImagePicker().pickImage(source: source);
 
   Future<void> getImageFromGallery() async {
     final pickedImage =
@@ -194,6 +165,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     getImage();
+    _fetchCachedUserData();
     userDocument.snapshots().listen((snapshot) {
       setState(() {
         profileName = snapshot.data()?['name'] ?? '';
